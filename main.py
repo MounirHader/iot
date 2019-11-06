@@ -4,6 +4,8 @@ import time
 import sys
 import os
 import subprocess
+import traceback
+import logging
 
 # bluetooth device to read
 macs = ['DC:07:6C:EF:50:AF', 'CF:EF:4C:B9:98:7B', 'F0:D1:20:03:81:29']
@@ -15,6 +17,9 @@ sas_tokens = ["HostName=future-facts-iothub.azure-devices.net;DeviceId=ruuvitag-
 DEVICE_ID = int(sys.argv[1]) - 1
 CONNECTION_STRING = sas_tokens[DEVICE_ID]
 MSG_TXT = '{{"device_id": {device_id}, "temperature": {temperature},"humidity": {humidity}}}'
+
+# configure log settings
+logging.basicConfig(filename='rasppi.log', filemode='a', format='%(asctime)s - DEVICE_ID \n %(message)s' , datefmt='%d-%b-%y %H:%M:%S')
 
 def iothub_client_init():
     # Create an IoT Hub client
@@ -31,9 +36,10 @@ def iothub_client_telemetry_sample_run():
             try:
                 sensor = RuuviTag(macs[DEVICE_ID])
                 state = sensor.update()
-            except:
-                pass
-                #os.system('sudo reboot')
+            except Exception:
+                logging.error(traceback.format_exc())
+                os.system("sudo reboot")
+
 #                 print("Connection error, restarting bluetooth drivers...")
 #                 subprocess.call("sudo hciconfig hci0 down".split())
 #                 subprocess.call("sudo hciconfig hci0 up".split())
