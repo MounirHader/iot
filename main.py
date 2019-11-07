@@ -19,7 +19,7 @@ CONNECTION_STRING = sas_tokens[DEVICE_ID]
 MSG_TXT = '{{"device_id": {device_id}, "temperature": {temperature},"humidity": {humidity}}}'
 
 # configure log settings
-logging.basicConfig(filename='rasppi.log', filemode='a', format='%(asctime)s - DEVICE_ID \n %(message)s' , datefmt='%d-%b-%y %H:%M:%S')
+logging.basicConfig(filename='rasppi.log', filemode='a', format='%(asctime)s \n %(message)s')
 
 def iothub_client_init():
     # Create an IoT Hub client
@@ -37,7 +37,9 @@ def iothub_client_telemetry_sample_run():
                 sensor = RuuviTag(macs[DEVICE_ID])
                 state = sensor.update()
             except Exception:
-                logging.error(traceback.format_exc())
+		logging.error("Error in thread %s", DEVICE_ID)
+                logging.error(Exception)
+		logging.error(traceback.format_exc())
                 os.system("sudo reboot")
 
 #                 print("Connection error, restarting bluetooth drivers...")
