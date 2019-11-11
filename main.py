@@ -35,11 +35,9 @@ def iothub_client_telemetry_sample_run():
         while state is None:
             try:
                 sensor = RuuviTag(macs[DEVICE_ID])
-                state = sensor.update()
-            except Exception:
-		logging.error("Error in thread %s", DEVICE_ID)
-                logging.error(Exception)
-		logging.error(traceback.format_exc())
+                state = sensor.update() 
+            except Exception as e:
+                print( e )
                 os.system("sudo reboot")
 
 #                 print("Connection error, restarting bluetooth drivers...")
@@ -50,11 +48,6 @@ def iothub_client_telemetry_sample_run():
         humidity = state["humidity"]
         msg_txt_formatted = MSG_TXT.format(device_id=DEVICE_ID+1, temperature=temperature, humidity=humidity)
         message = Message(msg_txt_formatted)
-
-        if temperature > 22:
-          message.custom_properties["temperatureAlert"] = "true"
-        else:
-          message.custom_properties["temperatureAlert"] = "false"
 
         print(time.ctime())
         print( "Sending message: {}".format(message) )
