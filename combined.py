@@ -1,4 +1,5 @@
 from ruuvitag_sensor.ruuvitag import RuuviTag
+import ruuvitag_sensor.log
 from azure.iot.device import IoTHubDeviceClient, Message
 import time
 import sys
