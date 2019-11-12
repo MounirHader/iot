@@ -71,6 +71,6 @@ def iothub_client_telemetry_sample_run():
 
 
 if __name__ == "__main__":
-    print("Future Facts IoT Hub - Ruuvitag {}".format(DEVICE_ID + 1))
+    print("Future Facts IoT Hub - Ruuvitags")
     print("Press Ctrl-C to exit")
     iothub_client_telemetry_sample_run()
