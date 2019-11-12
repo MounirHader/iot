@@ -36,47 +36,40 @@ def iothub_client_init(device):
     client = IoTHubDeviceClient.create_from_connection_string(device)
     return client
 
-def generate_message(client):
+
+def generate_message(device_index):
+    state = None
+    while state is None:
+        try:
+            sensor = RuuviTag(macs[device_index])
+            state = sensor.update()
+        except Exception as e:
+            print(e)
+
     temperature = state["temperature"]
     humidity = state["humidity"]
     msg_txt_formatted = MSG_TXT.format(
-        device_id=DEVICE_ID + 1, temperature=temperature, humidity=humidity
+        device_id=device_index + 1, temperature=temperature, humidity=humidity
     )
     message = Message(msg_txt_formatted)
-
-    client.send_message(message)
+    return message
 
 
 def iothub_client_telemetry_sample_run():
-    client = iothub_client_init()
+    client1 = iothub_client_init(sas_tokens[0])
+    client2 = iothub_client_init(sas_tokens[1])
+    client3 = iothub_client_init(sas_tokens[2])
     print("IoT Hub device sending periodic messages, press Ctrl-C to exit")
     starttime = time.time()
     while True:
-        state = None
-        while state is None:
-            try:
-                sensor = RuuviTag(macs[DEVICE_ID])
-                state = sensor.update()
-            except Exception as e:
-                print(e)
-                os.system("sudo reboot")
+        message1 = generate_message(0)
+        message2 = generate_message(1)
+        message3 = generate_message(2)
 
-        #                 print("Connection error, restarting bluetooth drivers...")
-        #                 subprocess.call("sudo hciconfig hci0 down".split())
-        #                 subprocess.call("sudo hciconfig hci0 up".split())
-
-        temperature = state["temperature"]
-        humidity = state["humidity"]
-        msg_txt_formatted = MSG_TXT.format(
-            device_id=DEVICE_ID + 1, temperature=temperature, humidity=humidity
-        )
-        message = Message(msg_txt_formatted)
-
-        print(time.ctime())
-        print("Sending message: {}".format(message))
-        client.send_message(message)
-        print("Message successfully sent")
-        time.sleep(2.0 - ((time.time() - starttime) % 2))
+        client1.send_message(message1)
+        client2.send_message(message2)
+        client3.send_message(message3)
+        time.sleep(5.0 - ((time.time() - starttime) % 5))
 
 
 if __name__ == "__main__":
