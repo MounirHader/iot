@@ -19,8 +19,6 @@ sas_tokens = [
 ]
 
 # device to use (-1 added for indexing 0th list element for device 1)
-DEVICE_ID = int(sys.argv[1]) - 1
-CONNECTION_STRING = sas_tokens[DEVICE_ID]
 MSG_TXT = (
     '{{"device_id": {device_id}, "temperature": {temperature},"humidity": {humidity}}}'
 )
