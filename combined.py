@@ -35,11 +35,11 @@ def iothub_client_init(device):
     return client
 
 
-def generate_message(device_index):
+def generate_message(sensors, device_index):
     state = None
     while state is None:
         try:
-            sensor = RuuviTag(macs[device_index])
+            sensor = sensors[device_index]
             state = sensor.update()
         except Exception as e:
             print(e)
@@ -54,15 +54,20 @@ def generate_message(device_index):
 
 
 def iothub_client_telemetry_sample_run():
+    # IoT hub device clients
     client1 = iothub_client_init(sas_tokens[0])
     client2 = iothub_client_init(sas_tokens[1])
     client3 = iothub_client_init(sas_tokens[2])
+
+    # RuuviTag sensors
+    sensors = [RuuviTag(macs[0]), RuuviTag(macs[1]), RuuviTag(macs[2])]
+
     print("IoT Hub device sending periodic messages, press Ctrl-C to exit")
     starttime = time.time()
     while True:
-        message1 = generate_message(0)
-        message2 = generate_message(1)
-        message3 = generate_message(2)
+        message1 = generate_message(sensors, 0)
+        message2 = generate_message(sensors, 1)
+        message3 = generate_message(sensors, 2)
 
         client1.send_message(message1)
         client2.send_message(message2)
