@@ -20,7 +20,7 @@ sas_tokens = [
 ]
 
 # IoT hub message format
-MSG_TXT = '{{"timestamp": {timestamp} "device_id": {device_id}, "temperature": {temperature},"humidity": {humidity}}}'
+MSG_TXT = '{{"timestamp": {timestamp}, "device_id": {device_id}, "temperature": {temperature},"humidity": {humidity}}}'
 
 # configure log settings
 log = logging.getLogger("ruuvitag_sensor")
@@ -64,7 +64,7 @@ def iothub_client_run():
                 device_id=i + 1,
                 temperature=states[macs[i]]["temperature"],
                 humidity=states[macs[i]]["humidity"],
-                timestamp=time.strftime("%Y-%m-%d %H:%M:%S"),
+                timestamp=time.strftime("%Y-%m-%d %H:%M:%S")
             )
             # send messages to IoT hub
             clients[i].send_message(Message(msg_txt_formatted))
