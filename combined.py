@@ -1,5 +1,5 @@
 from ruuvitag_sensor.ruuvitag import RuuviTag
-import ruuvitag_sensor.log
+#import ruuvitag_sensor.log
 from azure.iot.device import IoTHubDeviceClient, Message
 import time
 import sys
@@ -24,11 +24,12 @@ MSG_TXT = (
     '{{"device_id": {device_id}, "temperature": {temperature},"humidity": {humidity}}}'
 )
 
+log = logging.getLogger('ruuvitag_sensor')
+log.setLevel(logging.INFO)
 # configure log settings
 logging.basicConfig(
     filename="rasppi.log", filemode="a", format="%(asctime)s \n %(message)s"
 )
-
 
 def iothub_client_init(device):
     # Create an IoT Hub client
