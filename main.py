@@ -43,7 +43,6 @@ def generate_message(client):
         device_id=DEVICE_ID + 1, temperature=temperature, humidity=humidity
     )
     message = Message(msg_txt_formatted)
-
     client.send_message(message)
 
 
@@ -52,6 +51,7 @@ def iothub_client_telemetry_sample_run():
     print("IoT Hub device sending periodic messages, press Ctrl-C to exit")
     starttime = time.time()
     while True:
+	counter = 1
         state = None
         while state is None:
             try:
@@ -71,11 +71,11 @@ def iothub_client_telemetry_sample_run():
             device_id=DEVICE_ID + 1, temperature=temperature, humidity=humidity
         )
         message = Message(msg_txt_formatted)
-
-        print(time.ctime())
-        print("Sending message: {}".format(message))
         client.send_message(message)
-        print("Message successfully sent")
+	if counter % 30 == 0:
+		client.disconnect()
+		client.connect()
+
         time.sleep(2.0 - ((time.time() - starttime) % 2))
 
 
